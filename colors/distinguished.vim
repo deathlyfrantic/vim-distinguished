@@ -5,211 +5,306 @@
 " Author: Kim Silkebækken <kim.silkebaekken+vim@gmail.com>
 " Source repository: https://github.com/Lokaltog/vim-distinguished
 
-" Initialization {{{
-    set background=dark
-
-    hi clear
-    if exists('syntax_on')
-        syntax reset
-    endif
-
-    " transparent background option {{{
-        if !exists('g:distinguished_transparent_background')
-            let g:distinguished_transparent_background = 0
-        endif
-
-        if g:distinguished_transparent_background
-            let s:bg = ['NONE', 'NONE']
-        else
-            let s:bg = ['16', '000000']
-        endif
-    " }}}
-
-    " rainbow parentheses option {{{
-        if !exists('g:distinguished_rainbow_parens')
-            let g:distinguished_rainbow_parens = 0
-        endif
-
-        if g:distinguished_rainbow_parens
-            let g:rbpt_colorpairs = [
-                \ [173, '#d7875f'],
-                \ [67 , '#5f87af'],
-                \ [238, '#444444'],
-                \ [94 , '#875f00'],
-                \ [66 , '#5f8787'],
-                \ [88 , '#870000'],
-                \ [131, '#af5f5f'],
-                \ [173, '#d7875f'],
-                \ [166, '#d75f00'],
-                \ [143, '#afaf5f'],
-                \ [88 , '#870000'],
-                \ [131, '#af5f5f'],
-                \ [67 , '#5f87af'],
-                \ [66 , '#5f8787'],
-                \ [94 , '#875f00'],
-                \ [160, '#d70000'],
-                \ ]
-        endif
-    " }}}
-
-    let g:colors_name = 'distinguished'
-
-    if !has('gui_running') && !has('nvim')
-        if &t_Co != 256
-            echoe 'The ' . g:colors_name . ' color scheme requires gvim or a 256-color terminal'
-
-            finish
-        endif
-    endif
+" Palette {{{
+" reference: http://www.calmar.ws/vim/256-xterm-24bit-rgb-color-chart.html
+" don't pay too much attention the names of the groups,
+" they're very approximate
+let s:black = [16, '#000000']
+let s:white = [231, '#ffffff']
+" red {{{
+let s:red = [
+    \ [ 52, '#5f0000'],
+    \ [ 88, '#870000'],
+    \ [124, '#af0000'],
+    \ [160, '#d70000'],
+    \ [196, '#ff0000'],
+    \ ]
 " }}}
-" Color dictionary parser {{{
-    function! s:ColorDictParser(color_dict)
-        for [group, group_colors] in items(a:color_dict)
-            exec 'hi ' . group
-                \ . ' ctermfg=' . (group_colors[0] == '' ? 'NONE' :       group_colors[0])
-                \ . ' ctermbg=' . (group_colors[1] == '' ? 'NONE' :       group_colors[1])
-                \ . '   cterm=' . (group_colors[2] == '' ? 'NONE' :       group_colors[2])
-                \
-                \ . '   guifg=' . (group_colors[3] == '' ? 'NONE' : '#' . group_colors[3])
-                \ . '   guibg=' . (group_colors[4] == '' ? 'NONE' : '#' . group_colors[4])
-                \ . '     gui=' . (group_colors[5] == '' ? 'NONE' :       group_colors[5])
-        endfor
-    endfunction
+" orange {{{
+let s:orange = [
+    \ [ 94, '#875f00'],
+    \ [130, '#af5f00'],
+    \ [166, '#d75f00'],
+    \ [172, '#d78700'],
+    \ [202, '#ff5f00'],
+    \ [208, '#ff8700'],
+    \ [214, '#ffaf00'],
+    \ [215, '#ffaf5f'],
+    \ ]
+" }}}
+" yellow {{{
+let s:yellow = [
+    \ [186, '#d7d787'],
+    \ [220, '#ffd700'],
+    \ [221, '#ffd75f'],
+    \ [222, '#ffd787'],
+    \ [227, '#ffff5f'],
+    \ [228, '#ffff87'],
+    \ ]
+" }}}
+" green {{{
+let s:green = [
+    \ [ 22, '#005f00'],
+    \ [ 65, '#5f875f'],
+    \ [112, '#87d700'],
+    \ [149, '#afd75f'],
+    \ [150, '#afd787'],
+    \ ]
+" }}}
+" blue {{{
+let s:blue = [
+    \ [ 25, '#005faf'],
+    \ [ 31, '#0087af'],
+    \ [ 66, '#5f8787'],
+    \ [ 67, '#5f87af'],
+    \ [ 68, '#5f87d7'],
+    \ [ 74, '#5fafd7'],
+    \ [109, '#87afaf'],
+    \ [152, '#afd7d7'],
+    \ ]
+" }}}
+" pink {{{
+let s:pink = [
+    \ [131, '#af5f5f'],
+    \ [137, '#af875f'],
+    \ [138, '#af8787'],
+    \ [143, '#afaf5f'],
+    \ [173, '#d7875f'],
+    \ [179, '#d7af5f'],
+    \ [180, '#d7af87'],
+    \ [187, '#d7d7af'],
+    \ [209, '#ff875f'],
+    \ ]
+" }}}
+" gray {{{
+let s:gray = [
+    \ [232, '#080808'],
+    \ [233, '#121212'],
+    \ [234, '#1c1c1c'],
+    \ [235, '#262626'],
+    \ [236, '#303030'],
+    \ [237, '#3a3a3a'],
+    \ [238, '#444444'],
+    \ [239, '#4e4e4e'],
+    \ [240, '#585858'],
+    \ [242, '#666666'],
+    \ [243, '#767676'],
+    \ [244, '#808080'],
+    \ [245, '#8a8a8a'],
+    \ [246, '#949494'],
+    \ [247, '#9e9e9e'],
+    \ [248, '#a8a8a8'],
+    \ [145, '#afafaf'],
+    \ [249, '#b2b2b2'],
+    \ [250, '#bcbcbc'],
+    \ [253, '#dadada'],
+    \ [255, '#eeeeee'],
+    \ ]
+" }}}
 " }}}
 
-"       | Highlight group             |  CTFG |  CTBG |    CTAttributes | || |   GUIFG |    GUIBG |   GUIAttributes |
-"       |-----------------------------|-------|-------|-----------------| || |---------|----------|-----------------|
-call s:ColorDictParser({
-    \   'Normal'                    : [    231,s:bg[0],               '',      'ffffff',   s:bg[1],               '']
-    \ , 'Visual'                    : [    240,    253,               '',      '585858',  'dadada',               '']
+" initialization {{{
+set background=dark
+
+hi clear
+if exists('syntax_on')
+    syntax reset
+endif
+
+" transparent background option {{{
+if !exists('g:distinguished_transparent_background')
+    let g:distinguished_transparent_background = 0
+endif
+
+if g:distinguished_transparent_background
+    let s:bg = ['NONE', '']
+else
+    let s:bg = [s:black[0], s:black[1]]
+endif
+" }}}
+
+" rainbow parentheses option {{{
+if !exists('g:distinguished_rainbow_parens')
+    let g:distinguished_rainbow_parens = 0
+endif
+
+if g:distinguished_rainbow_parens
+    let g:rbpt_colorpairs = [
+        \ [ s:green[4][0],  s:green[4][1]],
+        \ [s:yellow[5][0], s:yellow[5][1]],
+        \ [s:orange[7][0], s:orange[7][1]],
+        \ [   s:red[4][0],    s:red[4][1]],
+        \ [  s:pink[0][0],   s:pink[0][1]],
+        \ [  s:blue[0][0],   s:blue[0][1]],
+        \ [ s:green[0][0],  s:green[0][1]],
+        \ [s:yellow[0][0], s:yellow[0][1]],
+        \ [s:orange[0][0], s:orange[0][1]],
+        \ [   s:red[2][0],    s:red[2][1]],
+        \ [  s:pink[4][0],   s:pink[4][1]],
+        \ [  s:blue[3][0],   s:blue[3][1]],
+        \ [ s:green[2][0],  s:green[2][1]],
+        \ [s:yellow[3][0], s:yellow[3][1]],
+        \ [s:orange[3][0], s:orange[3][1]],
+        \ [   s:red[3][0],    s:red[3][1]],
+        \ ]
+endif
+" }}}
+
+let g:colors_name = 'distinguished'
+
+if !has('gui_running') && !has('nvim')
+    if &t_Co != 256
+        echoe 'The ' . g:colors_name . ' color scheme requires gvim or a 256-color terminal'
+        finish
+    endif
+endif
+" }}}
+
+" color dict {{{
+"     | Highlight group      | FG          | BG         | Attribute |
+"     |----------------------|-------------|------------|-----------|
+let s:color_dict = {
+    \ 'Normal'               : [s:white    , s:bg       , ''       ],
+    \ 'Visual'               : [s:gray[8]  , s:gray[19] , ''       ],
     \
-    \ , 'Cursor'                    : [     '',     '',               '',      'ffffff',  'dd4010',               '']
-    \ , 'lCursor'                   : [     '',     '',               '',      'ffffff',  '89b6e2',               '']
+    \ 'Cursor'               : [''         , ''         , ''       ],
+    \ 'lCursor'              : [''         , ''         , ''       ],
     \
-    \ , 'CursorLine'                : [     '',    236,               '',            '',  '3a3a3a',               '']
-    \ , 'CursorLineNr'              : [    231,    240,               '',      'ffffff',  '585858',               '']
-    \ , 'CursorColumn'              : [    231,    237,               '',      'ffffff',  '3a3a3a',               '']
+    \ 'CursorLine'           : [''         , s:gray[4]  , ''       ],
+    \ 'CursorLineNr'         : [s:white    , s:gray[8]  , ''       ],
+    \ 'CursorColumn'         : [s:white    , s:gray[5]  , ''       ],
     \
-    \ , 'Folded'                    : [    249,    234,               '',      'b2b2b2',  '1c1c1c',               '']
-    \ , 'FoldColumn'                : [    243,    234,               '',      '767676',  '1c1c1c',               '']
-    \ , 'SignColumn'                : [    231,    233,           'bold',      'ffffff',  '121212',           'bold']
-    \ , 'ColorColumn'               : [     '',    233,               '',            '',  '262626',               '']
+    \ 'Folded'               : [s:gray[17] , s:gray[2]  , ''       ],
+    \ 'FoldColumn'           : [s:gray[10] , s:gray[2]  , ''       ],
+    \ 'SignColumn'           : [s:white    , s:gray[1]  , 'bold'   ],
+    \ 'ColorColumn'          : [''         , s:gray[1]  , ''       ],
     \
-    \ , 'StatusLine'                : [    231,    236,           'bold',      'ffffff',  '303030',           'bold']
-    \ , 'StatusLineNC'              : [    244,    232,               '',      '808080',  '080808',               '']
+    \ 'StatusLine'           : [s:white    , s:gray[4]  , 'bold'   ],
+    \ 'StatusLineNC'         : [s:gray[11] , s:gray[0]  , ''       ],
     \
-    \ , 'LineNr'                    : [    243,    235,               '',      '767676',  '262626',               '']
-    \ , 'VertSplit'                 : [    240,     '',               '',      '585858',  '1c1c1c',               '']
+    \ 'LineNr'               : [s:gray[10] , s:gray[3]  , ''       ],
+    \ 'VertSplit'            : [s:gray[8]  , ''         , ''       ],
     \
-    \ , 'WildMenu'                  : [    234,    231,               '',      '1c1c1c',  'ffffff',               '']
-    \ , 'Directory'                 : [    143,     '',           'bold',      'afaf5f',        '',           'bold']
-    \ , 'Underlined'                : [    130,     '',               '',      'af5f00',        '',               '']
+    \ 'WildMenu'             : [s:gray[2]  , s:white    , ''       ],
+    \ 'Directory'            : [s:pink[3]  , ''         , 'bold'   ],
+    \ 'Underlined'           : [s:orange[1], ''         , ''       ],
     \
-    \ , 'Question'                  : [     74,     '',           'bold',      '5fafd7',        '',           'bold']
-    \ , 'MoreMsg'                   : [    214,     '',           'bold',      'ffaf00',        '',           'bold']
-    \ , 'WarningMsg'                : [    202,     '',           'bold',      'ff5f00',        '',           'bold']
-    \ , 'ErrorMsg'                  : [    196,     '',           'bold',      'ff0000',        '',           'bold']
+    \ 'Question'             : [s:blue[5]  , ''         , 'bold'   ],
+    \ 'MoreMsg'              : [s:orange[6], ''         , 'bold'   ],
+    \ 'WarningMsg'           : [s:orange[4], ''         , 'bold'   ],
+    \ 'ErrorMsg'             : [s:red[4]   , ''         , 'bold'   ],
     \
-    \ , 'Comment'                   : [    243,s:bg[0],               '',      '767676',   s:bg[1],               '']
-    \ , 'vimCommentTitleLeader'     : [    250,s:bg[0],               '',      'bcbcbc',   s:bg[1],               '']
-    \ , 'vimCommentTitle'           : [    250,s:bg[0],               '',      'bcbcbc',   s:bg[1],               '']
-    \ , 'vimCommentString'          : [    245,s:bg[0],               '',      '8a8a8a',   s:bg[1],               '']
+    \ 'Comment'              : [s:gray[10] , ''         , 'italic' ],
+    \ 'vimCommentTitleLeader': [s:gray[18] , ''         , 'italic' ],
+    \ 'vimCommentTitle'      : [s:gray[18] , ''         , 'italic' ],
+    \ 'vimCommentString'     : [s:gray[12] , ''         , 'italic' ],
     \
-    \ , 'TabLine'                   : [    231,    238,               '',      'ffffff',  '444444',               '']
-    \ , 'TabLineSel'                : [    255,     '',           'bold',      'eeeeee',        '',           'bold']
-    \ , 'TabLineFill'               : [    240,    238,               '',      '585858',  '444444',               '']
-    \ , 'TabLineNumber'             : [    160,    238,           'bold',      'd70000',  '444444',           'bold']
-    \ , 'TabLineClose'              : [    245,    238,           'bold',      '8a8a8a',  '444444',           'bold']
+    \ 'TabLine'              : [s:white    , s:gray[6]  , ''       ],
+    \ 'TabLineSel'           : [s:gray[20] , ''         , 'bold'   ],
+    \ 'TabLineFill'          : [s:gray[8]  , s:gray[6]  , ''       ],
+    \ 'TabLineNumber'        : [s:red[3]   , s:gray[6]  , 'bold'   ],
+    \ 'TabLineClose'         : [s:gray[12] , s:gray[6]  , 'bold'   ],
     \
-    \ , 'SpellCap'                  : [    231,     31,           'bold',      'ffffff',  '0087af',           'bold']
+    \ 'SpellCap'             : [s:white    , s:blue[1]  , 'bold'   ],
     \
-    \ , 'SpecialKey'                : [    239,     '',               '',      '4e4e4e',        '',               '']
-    \ , 'NonText'                   : [     88,     '',               '',      '870000',        '',               '']
-    \ , 'MatchParen'                : [    231,     25,           'bold',      'ffffff',  '005faf',           'bold']
+    \ 'SpecialKey'           : [s:gray[7]  , ''         , ''       ],
+    \ 'NonText'              : [ s:red[1]  , s:bg       , ''       ],
+    \ 'MatchParen'           : [s:white    , s:blue[0]  , 'bold'   ],
     \
-    \ , 'Constant'                  : [    137,     '',           'bold',      'af875f',        '',           'bold']
-    \ , 'Special'                   : [    150,     '',               '',      'afd787',        '',               '']
-    \ , 'Identifier'                : [     66,     '',           'bold',      '5f8787',        '',           'bold']
-    \ , 'Statement'                 : [    186,     '',           'bold',      'd7d787',        '',           'bold']
-    \ , 'PreProc'                   : [    247,     '',               '',      '9e9e9e',        '',               '']
-    \ , 'Type'                      : [     67,     '',           'bold',      '5f87af',        '',           'bold']
-    \ , 'String'                    : [    143,     '',               '',      'afaf5f',        '',               '']
-    \ , 'Number'                    : [    173,     '',               '',      'd7875f',        '',               '']
-    \ , 'Define'                    : [    173,     '',               '',      'd7875f',        '',               '']
-    \ , 'Error'                     : [    208,    124,               '',      'ff8700',  'af0000',               '']
-    \ , 'Function'                  : [    179,     '',               '',      'd7af5f',        '',               '']
-    \ , 'Include'                   : [    173,     '',               '',      'd7875f',        '',               '']
-    \ , 'PreCondit'                 : [    173,     '',               '',      'd7875f',        '',               '']
-    \ , 'Keyword'                   : [    173,     '',               '',      'd7875f',        '',               '']
-    \ , 'Search'                    : [    231,    131,               '',      'ffffff',  'af5f5f', 'underline,bold']
-    \ , 'Title'                     : [    231,     '',               '',      'ffffff',        '',               '']
-    \ , 'Delimiter'                 : [    246,     '',               '',      '949494',        '',               '']
-    \ , 'StorageClass'              : [    187,     '',               '',      'd7d7af',        '',               '']
-    \ , 'Operator'                  : [    180,     '',               '',      'd7af87',        '',               '']
+    \ 'Constant'             : [s:pink[1]  , ''         , 'bold'   ],
+    \ 'Special'              : [s:green[4] , ''         , ''       ],
+    \ 'Identifier'           : [s:blue[2]  , ''         , 'bold'   ],
+    \ 'Statement'            : [s:yellow[0], ''         , 'bold'   ],
+    \ 'PreProc'              : [s:gray[14] , ''         , ''       ],
+    \ 'Type'                 : [s:blue[3]  , ''         , 'bold'   ],
+    \ 'String'               : [s:pink[3]  , ''         , ''       ],
+    \ 'Number'               : [s:pink[4]  , ''         , ''       ],
+    \ 'Define'               : [s:pink[4]  , ''         , ''       ],
+    \ 'Error'                : [s:orange[5], s:red[2]   , ''       ],
+    \ 'Function'             : [s:pink[5]  , ''         , ''       ],
+    \ 'Include'              : [s:pink[4]  , ''         , ''       ],
+    \ 'PreCondit'            : [s:pink[4]  , ''         , ''       ],
+    \ 'Keyword'              : [s:pink[4]  , ''         , ''       ],
+    \ 'Search'               : [s:white    , s:pink[0]  , ''       ],
+    \ 'Title'                : [s:white    , ''         , ''       ],
+    \ 'Delimiter'            : [s:gray[13] , ''         , ''       ],
+    \ 'StorageClass'         : [s:pink[7]  , ''         , ''       ],
+    \ 'Operator'             : [s:pink[6]  , ''         , ''       ],
     \
-    \ , 'TODO'                      : [    228,     94,           'bold',      'ffff87',  '875f00',           'bold']
+    \ 'TODO'                 : [s:yellow[5], s:orange[0], 'bold'   ],
     \
-    \ , 'SyntasticWarning'          : [    220,     94,               '',      'ffff87',  '875f00',           'bold']
-    \ , 'SyntasticError'            : [    202,     52,               '',      'ffff87',  '875f00',           'bold']
+    \ 'SyntasticWarning'     : [s:yellow[1], s:orange[0], ''       ],
+    \ 'SyntasticError'       : [s:orange[4], s:red[0]   , ''       ],
     \
-    \ , 'Pmenu'                     : [    248,    240,               '',      'a8a8a8',  '585858',               '']
-    \ , 'PmenuSel'                  : [    253,    245,               '',      'dadada',  '8a8a8a',               '']
-    \ , 'PmenuSbar'                 : [    253,    248,               '',      'dadada',  'a8a8a8',               '']
+    \ 'Pmenu'                : [s:gray[15] , s:gray[8]  , ''       ],
+    \ 'PmenuSel'             : [s:gray[19] , s:gray[12] , ''       ],
+    \ 'PmenuSbar'            : [s:gray[19] , s:gray[15] , ''       ],
     \
-    \ , 'phpEOL'                    : [    245,     '',               '',      'dadada',        '',               '']
-    \ , 'phpStringDelim'            : [     94,     '',               '',      '875f00',        '',               '']
-    \ , 'phpDelimiter'              : [    160,     '',               '',      'd70000',        '',               '']
-    \ , 'phpFunctions'              : [    221,     '',           'bold',      'ffd75f',        '',           'bold']
-    \ , 'phpBoolean'                : [    172,     '',           'bold',      'd78700',        '',           'bold']
-    \ , 'phpOperator'               : [    215,     '',               '',      'ffaf5f',        '',               '']
-    \ , 'phpMemberSelector'         : [    138,     '',           'bold',      'af8787',        '',           'bold']
-    \ , 'phpParent'                 : [    227,     '',               '',      'ffff5f',        '',               '']
+    \ 'phpEOL'               : [s:gray[12] , ''         , ''       ],
+    \ 'phpStringDelim'       : [s:orange[0], ''         , ''       ],
+    \ 'phpDelimiter'         : [s:red[3]   , ''         , ''       ],
+    \ 'phpFunctions'         : [s:yellow[2], ''         , 'bold'   ],
+    \ 'phpBoolean'           : [s:orange[3], ''         , 'bold'   ],
+    \ 'phpOperator'          : [s:orange[7], ''         , ''       ],
+    \ 'phpMemberSelector'    : [s:pink[2]  , ''         , 'bold'   ],
+    \ 'phpParent'            : [s:yellow[4], ''         , ''       ],
     \
-    \ , 'PHPClassTag'               : [    253,     '',               '',      'dadada',        '',               '']
-    \ , 'PHPInterfaceTag'           : [    253,     '',               '',      'dadada',        '',               '']
-    \ , 'PHPFunctionTag'            : [    222,     '',           'bold',      'ffd787',        '',           'bold']
+    \ 'PHPClassTag'          : [s:gray[19] , ''         , ''       ],
+    \ 'PHPInterfaceTag'      : [s:gray[19] , ''         , ''       ],
+    \ 'PHPFunctionTag'       : [s:yellow[3], ''         , 'bold'   ],
     \
-    \ , 'pythonDocString'           : [    240,s:bg[0],               '',      '585858',   s:bg[1],               '']
-    \ , 'pythonDocStringTitle'      : [    245,s:bg[0],               '',      'dadada',   s:bg[1],               '']
-    \ , 'pythonRun'                 : [     65,     '',               '',      '5f875f',        '',               '']
-    \ , 'pythonBuiltinObj'          : [     67,     '',           'bold',      '5f87af',        '',           'bold']
-    \ , 'pythonSelf'                : [    250,     '',           'bold',      'bcbcbc',        '',           'bold']
-    \ , 'pythonFunction'            : [    179,     '',           'bold',      'd7af5f',        '',           'bold']
-    \ , 'pythonClass'               : [    221,     '',           'bold',      'ffd75f',        '',           'bold']
-    \ , 'pythonExClass'             : [    130,     '',               '',      'af5f00',        '',               '']
-    \ , 'pythonException'           : [    130,     '',           'bold',      'af5f00',        '',           'bold']
-    \ , 'pythonOperator'            : [    186,     '',               '',      'd7d787',        '',               '']
-    \ , 'pythonPreCondit'           : [    152,     '',           'bold',      'afd7d7',        '',           'bold']
-    \ , 'pythonDottedName'          : [    166,     '',               '',      'd75f00',        '',               '']
-    \ , 'pythonDecorator'           : [    124,     '',           'bold',      'af0000',        '',           'bold']
+    \ 'pythonDocString'      : [s:gray[8]  , ''         , ''       ],
+    \ 'pythonDocStringTitle' : [s:gray[12] , ''         , ''       ],
+    \ 'pythonRun'            : [s:green[1] , ''         , ''       ],
+    \ 'pythonBuiltinObj'     : [s:blue[3]  , ''         , 'bold'   ],
+    \ 'pythonSelf'           : [s:gray[18] , ''         , 'bold'   ],
+    \ 'pythonFunction'       : [s:pink[5]  , ''         , 'bold'   ],
+    \ 'pythonClass'          : [s:yellow[2], ''         , 'bold'   ],
+    \ 'pythonExClass'        : [s:orange[1], ''         , ''       ],
+    \ 'pythonException'      : [s:orange[1], ''         , 'bold'   ],
+    \ 'pythonOperator'       : [s:yellow[0], ''         , ''       ],
+    \ 'pythonPreCondit'      : [s:blue[7]  , ''         , 'bold'   ],
+    \ 'pythonDottedName'     : [s:orange[2], ''         , ''       ],
+    \ 'pythonDecorator'      : [s:red[2]   , ''         , 'bold'   ],
     \
-    \ , 'PythonInterfaceTag'        : [    109,     '',               '',      '87afaf',        '',               '']
-    \ , 'PythonClassTag'            : [    221,     '',               '',      'ffd75f',        '',               '']
-    \ , 'PythonFunctionTag'         : [    109,     '',               '',      '87afaf',        '',               '']
-    \ , 'PythonVariableTag'         : [    253,     '',               '',      'dadada',        '',               '']
-    \ , 'PythonMemberTag'           : [    145,     '',               '',      'afafaf',        '',               '']
+    \ 'PythonInterfaceTag'   : [s:blue[6]  , ''         , ''       ],
+    \ 'PythonClassTag'       : [s:yellow[2], ''         , ''       ],
+    \ 'PythonFunctionTag'    : [s:blue[6]  , ''         , ''       ],
+    \ 'PythonVariableTag'    : [s:gray[19] , ''         , ''       ],
+    \ 'PythonMemberTag'      : [s:gray[16] , ''         , ''       ],
     \
-    \ , 'CTagsImport'               : [    109,     '',               '',      '87afaf',        '',               '']
-    \ , 'CTagsClass'                : [    221,     '',               '',      'ffd75f',        '',               '']
-    \ , 'CTagsFunction'             : [    109,     '',               '',      '87afaf',        '',               '']
-    \ , 'CTagsGlobalVariable'       : [    253,     '',               '',      'dadada',        '',               '']
-    \ , 'CTagsMember'               : [    145,     '',               '',      'afafaf',        '',               '']
+    \ 'CTagsImport'          : [s:blue[6]  , ''         , ''       ],
+    \ 'CTagsClass'           : [s:yellow[2], ''         , ''       ],
+    \ 'CTagsFunction'        : [s:blue[6]  , ''         , ''       ],
+    \ 'CTagsGlobalVariable'  : [s:gray[19] , ''         , ''       ],
+    \ 'CTagsMember'          : [s:gray[16] , ''         , ''       ],
     \
-    \ , 'xmlTag'                    : [    149,     '',           'bold',      'afd75f',        '',           'bold']
-    \ , 'xmlTagName'                : [    250,     '',               '',      'bcbcbc',        '',               '']
-    \ , 'xmlEndTag'                 : [    209,     '',           'bold',      'ff875f',        '',           'bold']
+    \ 'xmlTag'               : [s:green[3] , ''         , 'bold'   ],
+    \ 'xmlTagName'           : [s:gray[18] , ''         , ''       ],
+    \ 'xmlEndTag'            : [s:pink[8]  , ''         , 'bold'   ],
     \
-    \ , 'cssImportant'              : [    166,     '',           'bold',      'd75f00',        '',           'bold']
+    \ 'cssImportant'         : [s:orange[2], ''         , 'bold'   ],
     \
-    \ , 'DiffAdd'                   : [    112,     22,               '',      '87d700',  '005f00',               '']
-    \ , 'DiffChange'                : [    220,     94,               '',      'ffd700',  '875f00',               '']
-    \ , 'DiffDelete'                : [    160,     '',               '',      'd70000',        '',               '']
-    \ , 'DiffText'                  : [    220,     94,   'reverse,bold',      'ffd700',  '875f00',   'reverse,bold']
+    \ 'DiffAdd'              : [s:green[2] , s:green[0] , ''       ],
+    \ 'DiffChange'           : [s:yellow[1], s:orange[0], ''       ],
+    \ 'DiffDelete'           : [s:red[3]   , ''         , ''       ],
+    \ 'DiffText'             : [s:yellow[1], s:orange[0], 'reverse'],
     \
-    \ , 'diffLine'                  : [     68,     '',           'bold',      '5f87d7',        '',           'bold']
-    \ , 'diffFile'                  : [    242,     '',               '',      '6c6c6c',        '',               '']
-    \ , 'diffNewFile'               : [    242,     '',               '',      '6c6c6c',        '',               '']
-\ })
+    \ 'diffLine'             : [s:blue[4]  , ''         , 'bold'   ],
+    \ 'diffFile'             : [s:gray[9]  , ''         , ''       ],
+    \ 'diffNewFile'          : [s:gray[9]  , ''         , ''       ],
+    \ }
+" }}}
+
+for [group, var] in items(s:color_dict)
+    exec 'hi ' . group
+        \ . ' ctermfg=' . (type(var[0]) == type([]) ? var[0][0] : 'NONE')
+        \ . ' ctermbg=' . (type(var[1]) == type([]) ? var[1][0] : 'NONE')
+        \ . '   cterm=' . (     var[2]  !=      ''  ? var[2]    : 'NONE')
+        \ . '   guifg=' . (type(var[0]) == type([]) ? var[0][1] : 'NONE')
+        \ . '   guibg=' . (type(var[1]) == type([]) ? var[1][1] : 'NONE')
+        \ . '     gui=' . (     var[2]  !=      ''  ? var[2]    : 'NONE')
+endfor
 
 hi link htmlTag            xmlTag
 hi link htmlTagName        xmlTagName

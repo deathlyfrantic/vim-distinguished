@@ -5,8 +5,8 @@ A dark vim color scheme for 256-color terminals.
 Originally by [Lokaltog](https://github.com/Lokaltog). There are about a billion forks of this theme but this one is
 mine. I've made the following changes:
 
-- No background color on comments.
-- GUI search colors match cterm search colors.
+- GUI and terminal colors are identical.
+- Comments are italic and have no background color.
 - Added `g:distinguished_transparent_background` - set this to 1 if you want the background to be transparent rather
   than black. I use a background image in my terminal so I like this option. Defaults to 0, meaning the background is
   set to black.

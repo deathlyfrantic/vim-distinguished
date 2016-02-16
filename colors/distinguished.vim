@@ -165,7 +165,7 @@ endif
 "     |----------------------|-------------|------------|-----------|
 let s:color_dict = {
     \ 'Normal'               : [s:white    , s:bg       , ''       ],
-    \ 'Visual'               : [s:gray[8]  , s:gray[19] , ''       ],
+    \ 'Visual'               : [s:white    , s:blue[0]  , ''       ],
     \
     \ 'Cursor'               : [''         , ''         , ''       ],
     \ 'lCursor'              : [''         , ''         , ''       ],

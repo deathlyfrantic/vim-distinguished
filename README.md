@@ -14,8 +14,8 @@ mine. I've made the following changes:
   [kien/rainbow_parentheses.vim](https://github.com/kien/rainbow_parentheses.vim). This just sets the
   `g:rbpt_colorpairs` dictionary using some colors from the theme. Defaults to 0, meaning the dictionary is not set.
 - Added the Distinguished theme for Airline to this repo. `:AirlineTheme distinguished` or `let g:airline_theme =
-  'distinguished'`. The current version of this is in the
+  'distinguished'`. There is a version of this is in the
   [vim-airline/vim-airline-themes](https://github.com/vim-airline/vim-airline-themes) repo but if I make changes
-  they'll show up here first.
+  they'll show up here.
 
 There may be more changes to come. Pull requests welcome if you should feel so inclined!

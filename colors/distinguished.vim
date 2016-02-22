@@ -208,7 +208,7 @@ let s:color_dict = {
     \ 'SpellCap'             : [s:white    , s:blue[1]  , 'bold'   ],
     \
     \ 'SpecialKey'           : [s:gray[7]  , ''         , ''       ],
-    \ 'NonText'              : [ s:red[1]  , s:bg       , ''       ],
+    \ 'NonText'              : [s:red[1]   , s:bg       , ''       ],
     \ 'MatchParen'           : [s:white    , s:blue[0]  , 'bold'   ],
     \
     \ 'Constant'             : [s:pink[1]  , ''         , 'bold'   ],
@@ -236,9 +236,10 @@ let s:color_dict = {
     \ 'SyntasticWarning'     : [s:yellow[1], s:orange[0], ''       ],
     \ 'SyntasticError'       : [s:orange[4], s:red[0]   , ''       ],
     \
-    \ 'Pmenu'                : [s:gray[15] , s:gray[8]  , ''       ],
-    \ 'PmenuSel'             : [s:gray[19] , s:gray[12] , ''       ],
-    \ 'PmenuSbar'            : [s:gray[19] , s:gray[15] , ''       ],
+    \ 'Pmenu'                : [s:gray[10] , s:gray[3]  , ''       ],
+    \ 'PmenuSel'             : [s:white    , s:gray[8]  , ''       ],
+    \ 'PmenuSbar'            : [s:gray[10] , s:gray[8]  , ''       ],
+    \ 'PmenuThumb'           : [''         , s:gray[12] , ''       ],
     \
     \ 'phpEOL'               : [s:gray[12] , ''         , ''       ],
     \ 'phpStringDelim'       : [s:orange[0], ''         , ''       ],
@@ -317,3 +318,4 @@ hi link phpDocParam        vimCommentTitle
 hi link diffAdded          DiffAdd
 hi link diffChanged        DiffChange
 hi link diffRemoved        DiffDelete
+" vim: foldmethod=marker

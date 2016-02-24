@@ -111,11 +111,20 @@ if exists('syntax_on')
     syntax reset
 endif
 
-" transparent background option {{{
-if !exists('g:distinguished_transparent_background')
-    let g:distinguished_transparent_background = 0
-endif
+" set option defaults {{{
+let s:options = [
+    \ 'g:distinguished_transparent_background',
+    \ 'g:distinguished_rainbow_parens',
+    \ 'g:distinguished_nerdtree_highlight',
+    \ ]
+for s:opt in s:options
+    if !exists(s:opt)
+        exec 'let ' . s:opt . ' = 0'
+    endif
+endfor
+" }}}
 
+" transparent background {{{
 if g:distinguished_transparent_background
     let s:bg = ['NONE', '']
 else
@@ -123,11 +132,7 @@ else
 endif
 " }}}
 
-" rainbow parentheses option {{{
-if !exists('g:distinguished_rainbow_parens')
-    let g:distinguished_rainbow_parens = 0
-endif
-
+" rainbow parentheses {{{
 if g:distinguished_rainbow_parens
     let g:rbpt_colorpairs = [
         \ [ s:green[4][0],  s:green[4][1]],
@@ -147,6 +152,48 @@ if g:distinguished_rainbow_parens
         \ [s:orange[3][0], s:orange[3][1]],
         \ [   s:red[3][0],    s:red[3][1]],
         \ ]
+endif
+" }}}
+
+" NERDTree {{{
+" file highlighting idea from https://github.com/scrooloose/nerdtree/issues/433
+if g:distinguished_nerdtree_highlight
+    let s:nerdtree_dict = {
+        \ 'c'       : [s:red[3]     , ''],
+        \ 'coffee'  : [s:orange[0]  , ''],
+        \ 'conf'    : [s:orange[2]  , ''],
+        \ 'config'  : [s:orange[2]  , ''],
+        \ 'css'     : [s:green[1]   , ''],
+        \ 'csv'     : [s:gray[10]   , ''],
+        \ 'db'      : [s:gray[12]   , ''],
+        \ 'django'  : [s:blue[7]    , ''],
+        \ 'el'      : [s:yellow[5]  , ''],
+        \ 'h'       : [s:red[2]     , ''],
+        \ 'html'    : [s:blue[7]    , ''],
+        \ 'ini'     : [s:yellow[1]  , ''],
+        \ 'js'      : [s:blue[2]    , ''],
+        \ 'json'    : [s:blue[2]    , ''],
+        \ 'mako'    : [s:blue[7]    , ''],
+        \ 'md'      : [s:blue[4]    , ''],
+        \ 'php'     : [s:pink[1]    , ''],
+        \ 'py'      : [s:pink[0]    , ''],
+        \ 'rs'      : [s:pink[4]    , ''],
+        \ 'sass'    : [s:green[2]   , ''],
+        \ 'scss'    : [s:green[2]   , ''],
+        \ 'sh'      : [s:green[0]   , ''],
+        \ 'sql'     : [s:gray[12]   , ''],
+        \ 'txt'     : [s:gray[15]   , ''],
+        \ 'vim'     : [s:orange[6]  , ''],
+        \ 'yml'     : [s:green[4]   , ''],
+        \ }
+    for [ext, var] in items(s:nerdtree_dict)
+        exec 'autocmd Filetype nerdtree highlight nerdtree-file-' . ext
+            \ . ' ctermfg=' . (type(var[0]) == type([]) ? var[0][0] : 'NONE')
+            \ . ' ctermbg=' . (type(var[1]) == type([]) ? var[1][0] : 'NONE')
+            \ . '   guifg=' . (type(var[0]) == type([]) ? var[0][1] : 'NONE')
+            \ . '   guibg=' . (type(var[1]) == type([]) ? var[1][1] : 'NONE')
+        exec 'autocmd Filetype nerdtree syn match nerdtree-file-' . ext .' #^\s\+.*' . ext . '$#'
+    endfor
 endif
 " }}}
 

@@ -13,9 +13,12 @@ mine. I've made the following changes:
 - Added `g:distinguished_rainbow_parens` - set this to 1 if you want to use Distinguished colors in
   [kien/rainbow_parentheses.vim](https://github.com/kien/rainbow_parentheses.vim). This just sets the
   `g:rbpt_colorpairs` dictionary using some colors from the theme. Defaults to 0, meaning the dictionary is not set.
+- Added `g:distinguished_nerdtree_highlight` - set this to 1 if you want to use Distinguished colors in
+  [NERDTree](https://github.com/scrooloose/nerdtree) to highlight filetypes. This uses a regex based on extensions to do
+  the highlighting. Defaults to 0, meaning filetypes are not highlighted.
 - Added the Distinguished theme for Airline to this repo. `:AirlineTheme distinguished` or `let g:airline_theme =
   'distinguished'`. There is a version of this is in the
   [vim-airline/vim-airline-themes](https://github.com/vim-airline/vim-airline-themes) repo but if I make changes
   they'll show up here.
 
-There may be more changes to come. Pull requests welcome if you should feel so inclined!
+Pull requests welcome!

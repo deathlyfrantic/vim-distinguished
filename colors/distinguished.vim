@@ -104,6 +104,15 @@ let s:gray = [
 " }}}
 
 " initialization {{{
+let g:colors_name = 'distinguished'
+
+if !has('gui_running') && !has('nvim')
+    if &t_Co != 256
+        echoe 'The ' . g:colors_name . ' color scheme requires gvim or a 256-color terminal'
+        finish
+    endif
+endif
+
 set background=dark
 
 hi clear
@@ -196,15 +205,6 @@ if g:distinguished_nerdtree_highlight
     endfor
 endif
 " }}}
-
-let g:colors_name = 'distinguished'
-
-if !has('gui_running') && !has('nvim')
-    if &t_Co != 256
-        echoe 'The ' . g:colors_name . ' color scheme requires gvim or a 256-color terminal'
-        finish
-    endif
-endif
 " }}}
 
 " color dict {{{

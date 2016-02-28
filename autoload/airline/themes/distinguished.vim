@@ -9,7 +9,6 @@ let s:gray    = [245, '#8a8a8a']
 let s:golden  = [143, '#afaf5f']
 let s:pink    = [131, '#af5f5f']
 let s:blue    = [ 67, '#5f87af']
-let s:orange  = [130, '#af5f00']
 let s:outerfg = [ 16, '#000000']
 let s:innerbg = [234, '#1c1c1c']
 let s:middle  = ['#bcbcbc', '#444444', 250, 238]
@@ -40,14 +39,11 @@ let g:airline#themes#distinguished#palette.accents = {
 let g:airline#themes#distinguished#palette.inactive = {
     \ 'airline_a': s:IA,
     \ 'airline_b': s:IA,
-    \ 'airline_c': s:IA}
+    \ 'airline_c': s:IA,
+    \ }
 
 let g:airline#themes#distinguished#palette.normal = airline#themes#generate_color_map(s:N1, s:middle, s:N3)
-let g:airline#themes#distinguished#palette.normal_modified = {
-    \ 'airline_a': ['', s:orange[1], '', s:orange[0], ''],
-    \ 'airline_c': [s:orange[1], '', s:orange[0], '', ''],
-    \ 'airline_x': [s:orange[1], '', s:orange[0], '', ''],
-    \ 'airline_z': ['', s:orange[1], '', s:orange[0], '']}
+let g:airline#themes#distinguished#palette.normal_modified = {}
 
 let g:airline#themes#distinguished#palette.insert = airline#themes#generate_color_map(s:I1, s:middle, s:I3)
 let g:airline#themes#distinguished#palette.insert_modified = {}

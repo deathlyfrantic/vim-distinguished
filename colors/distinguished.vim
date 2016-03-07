@@ -196,12 +196,12 @@ if g:distinguished_nerdtree_highlight
         \ 'yml'     : [s:green[4]   , ''],
         \ }
     for [ext, var] in items(s:nerdtree_dict)
-        exec 'autocmd Filetype nerdtree highlight nerdtree-file-' . ext
+        exec 'autocmd FileType nerdtree highlight nerdtree-file-' . ext
             \ . ' ctermfg=' . (type(var[0]) == type([]) ? var[0][0] : 'NONE')
             \ . ' ctermbg=' . (type(var[1]) == type([]) ? var[1][0] : 'NONE')
             \ . '   guifg=' . (type(var[0]) == type([]) ? var[0][1] : 'NONE')
             \ . '   guibg=' . (type(var[1]) == type([]) ? var[1][1] : 'NONE')
-        exec 'autocmd Filetype nerdtree syn match nerdtree-file-' . ext .' #^\s\+.*' . ext . '$#'
+        exec 'autocmd FileType nerdtree syn match nerdtree-file-' . ext .' #^\s\+.*' . ext . '$#'
     endfor
 endif
 " }}}
@@ -303,6 +303,7 @@ let s:color_dict = {
     \
     \ 'pythonDocString'      : [s:gray[8]  , ''         , ''       ],
     \ 'pythonDocStringTitle' : [s:gray[12] , ''         , ''       ],
+    \ 'pythonDot'            : [s:pink[2]  , ''         , 'bold'   ],
     \ 'pythonRun'            : [s:green[1] , ''         , ''       ],
     \ 'pythonBuiltinObj'     : [s:blue[3]  , ''         , 'bold'   ],
     \ 'pythonSelf'           : [s:gray[18] , ''         , 'bold'   ],

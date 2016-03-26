@@ -2,6 +2,8 @@
 
 A dark vim color scheme for 256-color terminals.
 
+![screenshot](https://cloud.githubusercontent.com/assets/7629614/14060188/0010f9fa-f32a-11e5-8a21-59439eb915a5.png)
+
 Originally by [Lokaltog](https://github.com/Lokaltog). There are about a billion forks of this theme but this one is
 mine. I've made the following changes:
 

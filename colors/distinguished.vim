@@ -115,7 +115,7 @@ endif
 
 set background=dark
 
-hi clear
+highlight  clear
 if exists('syntax_on')
     syntax reset
 endif
@@ -135,9 +135,9 @@ endfor
 
 " transparent background {{{
 if g:distinguished_transparent_background
-    let s:bg = ['NONE', '']
+    let s:bg = ['NONE', 'NONE']
 else
-    let s:bg = [s:black[0], s:black[1]]
+    let s:bg = deepcopy(s:black)
 endif
 " }}}
 
@@ -210,150 +210,157 @@ endif
 " color dict {{{
 "     | Highlight group      | FG          | BG         | Attribute |
 "     |----------------------|-------------|------------|-----------|
-let s:color_dict = {
-    \ 'Normal'               : [s:white    , s:bg       , ''       ],
-    \ 'Visual'               : [s:white    , s:blue[0]  , ''       ],
+let s:color_list = [
+    \ ['Normal'               , s:white    , s:bg       , ''       ],
+    \ ['Visual'               , s:white    , s:blue[0]  , ''       ],
     \
-    \ 'Cursor'               : [''         , ''         , ''       ],
-    \ 'lCursor'              : [''         , ''         , ''       ],
+    \ ['Cursor'               , ''         , ''         , ''       ],
+    \ ['lCursor'              , ''         , ''         , ''       ],
     \
-    \ 'CursorLine'           : [''         , s:gray[4]  , ''       ],
-    \ 'CursorLineNr'         : [s:white    , s:gray[8]  , ''       ],
-    \ 'CursorColumn'         : [s:white    , s:gray[5]  , ''       ],
+    \ ['CursorLine'           , ''         , s:gray[4]  , ''       ],
+    \ ['CursorLineNr'         , s:white    , s:gray[8]  , ''       ],
+    \ ['CursorColumn'         , s:white    , s:gray[5]  , ''       ],
     \
-    \ 'Folded'               : [s:gray[17] , s:gray[2]  , ''       ],
-    \ 'FoldColumn'           : [s:gray[10] , s:gray[2]  , ''       ],
-    \ 'SignColumn'           : [s:white    , s:gray[1]  , 'bold'   ],
-    \ 'ColorColumn'          : [''         , s:gray[1]  , ''       ],
+    \ ['Folded'               , s:gray[17] , s:gray[2]  , ''       ],
+    \ ['FoldColumn'           , s:gray[10] , s:gray[2]  , ''       ],
+    \ ['SignColumn'           , s:white    , s:gray[3]  , 'bold'   ],
+    \ ['ColorColumn'          , ''         , s:gray[1]  , ''       ],
     \
-    \ 'StatusLine'           : [s:white    , s:gray[4]  , 'bold'   ],
-    \ 'StatusLineNC'         : [s:gray[11] , s:gray[0]  , ''       ],
+    \ ['StatusLine'           , s:white    , s:gray[4]  , 'bold'   ],
+    \ ['StatusLineNC'         , s:gray[11] , s:gray[0]  , ''       ],
     \
-    \ 'LineNr'               : [s:gray[10] , s:gray[3]  , ''       ],
-    \ 'VertSplit'            : [s:gray[8]  , ''         , ''       ],
+    \ ['LineNr'               , s:gray[10] , s:gray[3]  , ''       ],
+    \ ['VertSplit'            , s:gray[8]  , ''         , ''       ],
     \
-    \ 'WildMenu'             : [s:gray[2]  , s:white    , ''       ],
-    \ 'Directory'            : [s:pink[3]  , ''         , 'bold'   ],
-    \ 'Underlined'           : [s:orange[1], ''         , ''       ],
+    \ ['WildMenu'             , s:gray[2]  , s:white    , ''       ],
+    \ ['Directory'            , s:pink[3]  , ''         , 'bold'   ],
+    \ ['Underlined'           , s:orange[1], ''         , ''       ],
     \
-    \ 'Question'             : [s:blue[5]  , ''         , 'bold'   ],
-    \ 'MoreMsg'              : [s:orange[6], ''         , 'bold'   ],
-    \ 'WarningMsg'           : [s:orange[4], ''         , 'bold'   ],
-    \ 'ErrorMsg'             : [s:red[4]   , ''         , 'bold'   ],
+    \ ['Question'             , s:blue[5]  , ''         , 'bold'   ],
+    \ ['MoreMsg'              , s:orange[6], ''         , 'bold'   ],
+    \ ['WarningMsg'           , s:orange[4], ''         , 'bold'   ],
+    \ ['ErrorMsg'             , s:red[4]   , ''         , 'bold'   ],
     \
-    \ 'Comment'              : [s:gray[10] , ''         , 'italic' ],
-    \ 'vimCommentTitleLeader': [s:gray[18] , ''         , 'italic' ],
-    \ 'vimCommentTitle'      : [s:gray[18] , ''         , 'italic' ],
-    \ 'vimCommentString'     : [s:gray[12] , ''         , 'italic' ],
+    \ ['Comment'              , s:gray[10] , ''         , 'italic' ],
+    \ ['vimCommentTitleLeader', s:gray[18] , ''         , 'italic' ],
+    \ ['vimCommentTitle'      , s:gray[18] , ''         , 'italic' ],
+    \ ['vimCommentString'     , s:gray[12] , ''         , 'italic' ],
     \
-    \ 'TabLine'              : [s:white    , s:gray[6]  , ''       ],
-    \ 'TabLineSel'           : [s:gray[20] , ''         , 'bold'   ],
-    \ 'TabLineFill'          : [s:gray[8]  , s:gray[6]  , ''       ],
-    \ 'TabLineNumber'        : [s:red[3]   , s:gray[6]  , 'bold'   ],
-    \ 'TabLineClose'         : [s:gray[12] , s:gray[6]  , 'bold'   ],
+    \ ['TabLine'              , s:white    , s:gray[6]  , ''       ],
+    \ ['TabLineSel'           , s:gray[20] , ''         , 'bold'   ],
+    \ ['TabLineFill'          , s:gray[8]  , s:gray[6]  , ''       ],
+    \ ['TabLineNumber'        , s:red[3]   , s:gray[6]  , 'bold'   ],
+    \ ['TabLineClose'         , s:gray[12] , s:gray[6]  , 'bold'   ],
     \
-    \ 'SpellCap'             : [s:white    , s:blue[1]  , 'bold'   ],
+    \ ['SpellCap'             , s:white    , s:blue[1]  , 'bold'   ],
     \
-    \ 'SpecialKey'           : [s:gray[7]  , ''         , ''       ],
-    \ 'NonText'              : [s:red[1]   , s:bg       , ''       ],
-    \ 'MatchParen'           : [s:white    , s:blue[0]  , 'bold'   ],
+    \ ['SpecialKey'           , s:gray[7]  , ''         , ''       ],
+    \ ['NonText'              , s:red[1]   , s:bg       , ''       ],
+    \ ['MatchParen'           , s:white    , s:blue[0]  , 'bold'   ],
     \
-    \ 'Constant'             : [s:pink[1]  , ''         , 'bold'   ],
-    \ 'Special'              : [s:green[4] , ''         , ''       ],
-    \ 'Identifier'           : [s:blue[2]  , ''         , 'bold'   ],
-    \ 'Statement'            : [s:yellow[0], ''         , 'bold'   ],
-    \ 'PreProc'              : [s:gray[14] , ''         , ''       ],
-    \ 'Type'                 : [s:blue[3]  , ''         , 'bold'   ],
-    \ 'String'               : [s:pink[3]  , ''         , ''       ],
-    \ 'Number'               : [s:pink[4]  , ''         , ''       ],
-    \ 'Define'               : [s:pink[4]  , ''         , ''       ],
-    \ 'Error'                : [s:orange[5], s:red[2]   , ''       ],
-    \ 'Function'             : [s:pink[5]  , ''         , ''       ],
-    \ 'Include'              : [s:pink[4]  , ''         , ''       ],
-    \ 'PreCondit'            : [s:pink[4]  , ''         , ''       ],
-    \ 'Keyword'              : [s:pink[4]  , ''         , ''       ],
-    \ 'Search'               : [s:white    , s:pink[0]  , ''       ],
-    \ 'Title'                : [s:white    , ''         , ''       ],
-    \ 'Delimiter'            : [s:gray[13] , ''         , ''       ],
-    \ 'StorageClass'         : [s:pink[7]  , ''         , ''       ],
-    \ 'Operator'             : [s:pink[6]  , ''         , ''       ],
+    \ ['Constant'             , s:pink[1]  , ''         , 'bold'   ],
+    \ ['Special'              , s:green[4] , ''         , ''       ],
+    \ ['Identifier'           , s:blue[2]  , ''         , 'bold'   ],
+    \ ['Statement'            , s:yellow[0], ''         , 'bold'   ],
+    \ ['PreProc'              , s:gray[14] , ''         , ''       ],
+    \ ['Type'                 , s:blue[3]  , ''         , 'bold'   ],
+    \ ['String'               , s:pink[3]  , ''         , ''       ],
+    \ ['Number'               , s:pink[4]  , ''         , ''       ],
+    \ ['Define'               , s:pink[4]  , ''         , ''       ],
+    \ ['Error'                , s:orange[5], s:red[2]   , ''       ],
+    \ ['Function'             , s:pink[5]  , ''         , ''       ],
+    \ ['Include'              , s:pink[4]  , ''         , ''       ],
+    \ ['PreCondit'            , s:pink[4]  , ''         , ''       ],
+    \ ['Keyword'              , s:pink[4]  , ''         , ''       ],
+    \ ['Search'               , s:white    , s:pink[0]  , ''       ],
+    \ ['Title'                , s:white    , ''         , ''       ],
+    \ ['Delimiter'            , s:gray[13] , ''         , ''       ],
+    \ ['StorageClass'         , s:pink[7]  , ''         , ''       ],
+    \ ['Operator'             , s:pink[6]  , ''         , ''       ],
     \
-    \ 'TODO'                 : [s:yellow[5], s:orange[0], 'bold'   ],
+    \ ['TODO'                 , s:yellow[5], s:orange[0], 'bold'   ],
     \
-    \ 'SyntasticWarning'     : [s:yellow[1], s:orange[0], ''       ],
-    \ 'SyntasticError'       : [s:orange[4], s:red[0]   , ''       ],
+    \ ['SyntasticWarning'     , s:yellow[1], s:orange[0], ''       ],
+    \ ['SyntasticError'       , s:orange[4], s:red[0]   , ''       ],
     \
-    \ 'Pmenu'                : [s:gray[10] , s:gray[3]  , ''       ],
-    \ 'PmenuSel'             : [s:white    , s:gray[8]  , ''       ],
-    \ 'PmenuSbar'            : [s:gray[10] , s:gray[8]  , ''       ],
-    \ 'PmenuThumb'           : [''         , s:gray[12] , ''       ],
+    \ ['Pmenu'                , s:gray[10] , s:gray[3]  , ''       ],
+    \ ['PmenuSel'             , s:white    , s:gray[8]  , ''       ],
+    \ ['PmenuSbar'            , s:gray[10] , s:gray[8]  , ''       ],
+    \ ['PmenuThumb'           , ''         , s:gray[12] , ''       ],
     \
-    \ 'phpEOL'               : [s:gray[12] , ''         , ''       ],
-    \ 'phpStringDelim'       : [s:orange[0], ''         , ''       ],
-    \ 'phpDelimiter'         : [s:red[3]   , ''         , ''       ],
-    \ 'phpFunctions'         : [s:yellow[2], ''         , 'bold'   ],
-    \ 'phpBoolean'           : [s:orange[3], ''         , 'bold'   ],
-    \ 'phpOperator'          : [s:orange[7], ''         , ''       ],
-    \ 'phpMemberSelector'    : [s:pink[2]  , ''         , 'bold'   ],
-    \ 'phpParent'            : [s:yellow[4], ''         , ''       ],
+    \ ['phpEOL'               , s:gray[12] , ''         , ''       ],
+    \ ['phpStringDelim'       , s:orange[0], ''         , ''       ],
+    \ ['phpDelimiter'         , s:red[3]   , ''         , ''       ],
+    \ ['phpFunctions'         , s:yellow[2], ''         , 'bold'   ],
+    \ ['phpBoolean'           , s:orange[3], ''         , 'bold'   ],
+    \ ['phpOperator'          , s:orange[7], ''         , ''       ],
+    \ ['phpMemberSelector'    , s:pink[2]  , ''         , 'bold'   ],
+    \ ['phpParent'            , s:yellow[4], ''         , ''       ],
     \
-    \ 'PHPClassTag'          : [s:gray[19] , ''         , ''       ],
-    \ 'PHPInterfaceTag'      : [s:gray[19] , ''         , ''       ],
-    \ 'PHPFunctionTag'       : [s:yellow[3], ''         , 'bold'   ],
+    \ ['PHPClassTag'          , s:gray[19] , ''         , ''       ],
+    \ ['PHPInterfaceTag'      , s:gray[19] , ''         , ''       ],
+    \ ['PHPFunctionTag'       , s:yellow[3], ''         , 'bold'   ],
     \
-    \ 'pythonDocString'      : [s:gray[8]  , ''         , ''       ],
-    \ 'pythonDocStringTitle' : [s:gray[12] , ''         , ''       ],
-    \ 'pythonDot'            : [s:pink[2]  , ''         , 'bold'   ],
-    \ 'pythonRun'            : [s:green[1] , ''         , ''       ],
-    \ 'pythonBuiltinObj'     : [s:blue[3]  , ''         , 'bold'   ],
-    \ 'pythonSelf'           : [s:gray[18] , ''         , 'bold'   ],
-    \ 'pythonFunction'       : [s:pink[5]  , ''         , 'bold'   ],
-    \ 'pythonClass'          : [s:yellow[2], ''         , 'bold'   ],
-    \ 'pythonExClass'        : [s:orange[1], ''         , ''       ],
-    \ 'pythonException'      : [s:orange[1], ''         , 'bold'   ],
-    \ 'pythonOperator'       : [s:yellow[0], ''         , ''       ],
-    \ 'pythonPreCondit'      : [s:blue[7]  , ''         , 'bold'   ],
-    \ 'pythonDottedName'     : [s:orange[2], ''         , ''       ],
-    \ 'pythonDecorator'      : [s:red[2]   , ''         , 'bold'   ],
+    \ ['pythonDocString'      , s:gray[8]  , ''         , ''       ],
+    \ ['pythonDocStringTitle' , s:gray[12] , ''         , ''       ],
+    \ ['pythonDot'            , s:pink[2]  , ''         , 'bold'   ],
+    \ ['pythonRun'            , s:green[1] , ''         , ''       ],
+    \ ['pythonBuiltinObj'     , s:blue[3]  , ''         , 'bold'   ],
+    \ ['pythonSelf'           , s:gray[18] , ''         , 'bold'   ],
+    \ ['pythonFunction'       , s:pink[5]  , ''         , 'bold'   ],
+    \ ['pythonClass'          , s:yellow[2], ''         , 'bold'   ],
+    \ ['pythonExClass'        , s:orange[1], ''         , ''       ],
+    \ ['pythonException'      , s:orange[1], ''         , 'bold'   ],
+    \ ['pythonOperator'       , s:yellow[0], ''         , ''       ],
+    \ ['pythonPreCondit'      , s:blue[7]  , ''         , 'bold'   ],
+    \ ['pythonDottedName'     , s:orange[2], ''         , ''       ],
+    \ ['pythonDecorator'      , s:red[2]   , ''         , 'bold'   ],
     \
-    \ 'PythonInterfaceTag'   : [s:blue[6]  , ''         , ''       ],
-    \ 'PythonClassTag'       : [s:yellow[2], ''         , ''       ],
-    \ 'PythonFunctionTag'    : [s:blue[6]  , ''         , ''       ],
-    \ 'PythonVariableTag'    : [s:gray[19] , ''         , ''       ],
-    \ 'PythonMemberTag'      : [s:gray[16] , ''         , ''       ],
+    \ ['PythonInterfaceTag'   , s:blue[6]  , ''         , ''       ],
+    \ ['PythonClassTag'       , s:yellow[2], ''         , ''       ],
+    \ ['PythonFunctionTag'    , s:blue[6]  , ''         , ''       ],
+    \ ['PythonVariableTag'    , s:gray[19] , ''         , ''       ],
+    \ ['PythonMemberTag'      , s:gray[16] , ''         , ''       ],
     \
-    \ 'CTagsImport'          : [s:blue[6]  , ''         , ''       ],
-    \ 'CTagsClass'           : [s:yellow[2], ''         , ''       ],
-    \ 'CTagsFunction'        : [s:blue[6]  , ''         , ''       ],
-    \ 'CTagsGlobalVariable'  : [s:gray[19] , ''         , ''       ],
-    \ 'CTagsMember'          : [s:gray[16] , ''         , ''       ],
+    \ ['CTagsImport'          , s:blue[6]  , ''         , ''       ],
+    \ ['CTagsClass'           , s:yellow[2], ''         , ''       ],
+    \ ['CTagsFunction'        , s:blue[6]  , ''         , ''       ],
+    \ ['CTagsGlobalVariable'  , s:gray[19] , ''         , ''       ],
+    \ ['CTagsMember'          , s:gray[16] , ''         , ''       ],
     \
-    \ 'xmlTag'               : [s:green[3] , ''         , 'bold'   ],
-    \ 'xmlTagName'           : [s:gray[18] , ''         , ''       ],
-    \ 'xmlEndTag'            : [s:pink[8]  , ''         , 'bold'   ],
+    \ ['xmlTag'               , s:green[3] , ''         , 'bold'   ],
+    \ ['xmlTagName'           , s:gray[18] , ''         , ''       ],
+    \ ['xmlEndTag'            , s:pink[8]  , ''         , 'bold'   ],
     \
-    \ 'cssImportant'         : [s:orange[2], ''         , 'bold'   ],
+    \ ['cssImportant'         , s:orange[2], ''         , 'bold'   ],
     \
-    \ 'DiffAdd'              : [s:green[2] , s:green[0] , ''       ],
-    \ 'DiffChange'           : [s:yellow[1], s:orange[0], ''       ],
-    \ 'DiffDelete'           : [s:red[3]   , ''         , ''       ],
-    \ 'DiffText'             : [s:yellow[1], s:orange[0], 'reverse'],
+    \ ['DiffAdd'              , s:green[2] , s:green[0] , ''       ],
+    \ ['DiffChange'           , s:yellow[1], s:orange[0], ''       ],
+    \ ['DiffDelete'           , s:red[3]   , ''         , ''       ],
+    \ ['DiffText'             , s:yellow[1], s:orange[0], 'reverse'],
     \
-    \ 'diffLine'             : [s:blue[4]  , ''         , 'bold'   ],
-    \ 'diffFile'             : [s:gray[9]  , ''         , ''       ],
-    \ 'diffNewFile'          : [s:gray[9]  , ''         , ''       ],
-    \ }
+    \ ['GitGutterAdd'         , s:green[2] , s:gray[3]  , ''       ],
+    \ ['GitGutterChange'      , s:yellow[4], s:gray[3]  , ''       ],
+    \ ['GitGutterDelete'      , s:red[4]   , s:gray[3]  , ''       ],
+    \ ['GitGutterChangeDelete', s:yellow[4], s:gray[3]  , ''       ],
+    \
+    \ ['diffLine'             , s:blue[4]  , ''         , 'bold'   ],
+    \ ['diffFile'             , s:gray[9]  , ''         , ''       ],
+    \ ['diffNewFile'          , s:gray[9]  , ''         , ''       ],
+    \ ]
 " }}}
 
-for [group, var] in items(s:color_dict)
-    exec 'hi ' . group
-        \ . ' ctermfg=' . (type(var[0]) == type([]) ? var[0][0] : 'NONE')
-        \ . ' ctermbg=' . (type(var[1]) == type([]) ? var[1][0] : 'NONE')
-        \ . '   cterm=' . (     var[2]  !=      ''  ? var[2]    : 'NONE')
-        \ . '   guifg=' . (type(var[0]) == type([]) ? var[0][1] : 'NONE')
-        \ . '   guibg=' . (type(var[1]) == type([]) ? var[1][1] : 'NONE')
-        \ . '     gui=' . (     var[2]  !=      ''  ? var[2]    : 'NONE')
+for var in s:color_list
+    exec 'hi ' . var[0]
+        \ . ' ctermfg=' . (type(var[1]) == type([]) ? var[1][0] : 'NONE')
+        \ . ' ctermbg=' . (type(var[2]) == type([]) ? var[2][0] : 'NONE')
+        \ . '   cterm=' . (     var[3]  !=      ''  ? var[3]    : 'NONE')
+        \ . '   guifg=' . (type(var[1]) == type([]) ? var[1][1] : 'NONE')
+        \ . '   guibg=' . (type(var[2]) == type([]) ? var[2][1] : 'NONE')
+        \ . '     gui=' . (     var[3]  !=      ''  ? var[3]    : 'NONE')
 endfor
+
+hi link Conceal            Comment
 
 hi link htmlTag            xmlTag
 hi link htmlTagName        xmlTagName

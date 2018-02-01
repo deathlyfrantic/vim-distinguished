@@ -1,5 +1,5 @@
 " Author: Zandr Martin <zandrmartin+vim@gmail.com>
-" Source repository: https://github.com/zandrmartin/vim-distinguished
+" Source repository: https://github.com/deathlyfrantic/vim-distinguished
 "
 " Original theme by:
 " Author: Kim Silkebækken <kim.silkebaekken+vim@gmail.com>
